@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "academic_years",
+  "info": {
+    "singularName": "academic-year",
+    "pluralName": "academic-years",
+    "displayName": "AcademicYear"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "startDate": {
+      "type": "date"
+    },
+    "endDate": {
+      "type": "date"
+    },
+    "student_academic_years": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::student-academic-year.student-academic-year",
+      "mappedBy": "academic_year"
+    }
+  }
+}
