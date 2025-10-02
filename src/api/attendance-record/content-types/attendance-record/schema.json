@@ -13,9 +13,9 @@
   "attributes": {
     "students": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToMany",
       "target": "api::student.student",
-      "mappedBy": "attendance_record"
+      "mappedBy": "attendance_records"
     },
     "period": {
       "type": "relation",
@@ -30,6 +30,15 @@
         "Late",
         "Excused"
       ]
+    },
+    "subject": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::subject.subject",
+      "inversedBy": "attendance_record"
+    },
+    "date": {
+      "type": "datetime"
     }
   }
 }

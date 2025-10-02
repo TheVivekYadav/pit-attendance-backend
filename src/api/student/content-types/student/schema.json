@@ -15,9 +15,9 @@
       "type": "string",
       "required": true
     },
-    "attendance_record": {
+    "attendance_records": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "manyToMany",
       "target": "api::attendance-record.attendance-record",
       "inversedBy": "students"
     },
@@ -35,13 +35,15 @@
       "target": "plugin::users-permissions.user"
     },
     "rollNo": {
-      "type": "string"
+      "type": "string",
+      "required": true,
+      "unique": true
     },
-    "student_academic_years": {
+    "student_academic_year": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToOne",
       "target": "api::student-academic-year.student-academic-year",
-      "mappedBy": "student"
+      "inversedBy": "students"
     }
   }
 }

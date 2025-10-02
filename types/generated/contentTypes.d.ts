@@ -423,6 +423,7 @@ export interface ApiAttendanceRecordAttendanceRecord
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    date: Schema.Attribute.DateTime;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -434,7 +435,8 @@ export interface ApiAttendanceRecordAttendanceRecord
     student_status: Schema.Attribute.Enumeration<
       ['Present', 'Absent', 'Late', 'Excused']
     >;
-    students: Schema.Attribute.Relation<'oneToMany', 'api::student.student'>;
+    students: Schema.Attribute.Relation<'manyToMany', 'api::student.student'>;
+    subject: Schema.Attribute.Relation<'oneToOne', 'api::subject.subject'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -485,7 +487,8 @@ export interface ApiPeriodPeriod extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    date: Schema.Attribute.String;
+    date: Schema.Attribute.Date;
+    endTime: Schema.Attribute.Time;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -493,6 +496,7 @@ export interface ApiPeriodPeriod extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    startTime: Schema.Attribute.Time;
     subject: Schema.Attribute.Relation<'oneToOne', 'api::subject.subject'>;
     teacher: Schema.Attribute.Relation<'oneToOne', 'api::teacher.teacher'>;
     updatedAt: Schema.Attribute.DateTime;
@@ -537,7 +541,7 @@ export interface ApiStudentAcademicYearStudentAcademicYear
   extends Struct.CollectionTypeSchema {
   collectionName: 'student_academic_years';
   info: {
-    displayName: 'StudentAcademicYear';
+    displayName: 'StudentAcademicYears';
     pluralName: 'student-academic-years';
     singularName: 'student-academic-year';
   };
@@ -561,7 +565,7 @@ export interface ApiStudentAcademicYearStudentAcademicYear
     name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     semester: Schema.Attribute.Relation<'manyToOne', 'api::semester.semester'>;
-    student: Schema.Attribute.Relation<'manyToOne', 'api::student.student'>;
+    students: Schema.Attribute.Relation<'oneToMany', 'api::student.student'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -580,8 +584,8 @@ export interface ApiStudentStudent extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    attendance_record: Schema.Attribute.Relation<
-      'manyToOne',
+    attendance_records: Schema.Attribute.Relation<
+      'manyToMany',
       'api::attendance-record.attendance-record'
     >;
     createdAt: Schema.Attribute.DateTime;
@@ -599,10 +603,12 @@ export interface ApiStudentStudent extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    rollNo: Schema.Attribute.String;
+    rollNo: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
     slug: Schema.Attribute.String;
-    student_academic_years: Schema.Attribute.Relation<
-      'oneToMany',
+    student_academic_year: Schema.Attribute.Relation<
+      'manyToOne',
       'api::student-academic-year.student-academic-year'
     >;
     updatedAt: Schema.Attribute.DateTime;
@@ -618,7 +624,7 @@ export interface ApiStudentStudent extends Struct.CollectionTypeSchema {
 export interface ApiSubjectSubject extends Struct.CollectionTypeSchema {
   collectionName: 'subjects';
   info: {
-    displayName: 'Subject';
+    displayName: 'Subjects';
     pluralName: 'subjects';
     singularName: 'subject';
   };
@@ -626,6 +632,10 @@ export interface ApiSubjectSubject extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    attendance_record: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::attendance-record.attendance-record'
+    >;
     code: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -640,6 +650,11 @@ export interface ApiSubjectSubject extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     semester: Schema.Attribute.String;
     slug: Schema.Attribute.String;
+    student_academic_year: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::student-academic-year.student-academic-year'
+    >;
+    subjectId: Schema.Attribute.String;
     teacher: Schema.Attribute.Relation<'manyToOne', 'api::teacher.teacher'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

@@ -4,18 +4,18 @@
   "info": {
     "singularName": "student-academic-year",
     "pluralName": "student-academic-years",
-    "displayName": "StudentAcademicYear"
+    "displayName": "StudentAcademicYears"
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
   "attributes": {
-    "student": {
+    "students": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "oneToMany",
       "target": "api::student.student",
-      "inversedBy": "student_academic_years"
+      "mappedBy": "student_academic_year"
     },
     "academic_year": {
       "type": "relation",

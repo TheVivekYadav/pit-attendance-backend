@@ -4,7 +4,7 @@
   "info": {
     "singularName": "subject",
     "pluralName": "subjects",
-    "displayName": "Subject"
+    "displayName": "Subjects"
   },
   "options": {
     "draftAndPublish": true
@@ -28,6 +28,20 @@
     },
     "slug": {
       "type": "string"
+    },
+    "attendance_record": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::attendance-record.attendance-record",
+      "mappedBy": "subject"
+    },
+    "subjectId": {
+      "type": "string"
+    },
+    "student_academic_year": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::student-academic-year.student-academic-year"
     }
   }
 }

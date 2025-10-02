@@ -11,9 +11,6 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "date": {
-      "type": "string"
-    },
     "subject": {
       "type": "relation",
       "relation": "oneToOne",
@@ -23,6 +20,15 @@
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::teacher.teacher"
+    },
+    "date": {
+      "type": "date"
+    },
+    "startTime": {
+      "type": "time"
+    },
+    "endTime": {
+      "type": "time"
     }
   }
 }
