@@ -77,4 +77,4 @@ jobs:
             unzip -o deployment.zip
             rm deployment.zip
             npm install --omit=dev
-            pm2 restart lokdiary
+            pm2 restart strapi-app
