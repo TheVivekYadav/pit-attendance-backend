@@ -1,0 +1,80 @@
+name: Build and Deploy Strapi
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Project
+        run: npm run build
+        env:
+          NODE_ENV: production
+      
+      # --- CORRECTED STEP ---
+      # This now includes the critical src, config, and public folders.
+      - name: Package production files
+        run: |
+          mkdir -p deployment
+          rsync -av --exclude 'node_modules' --exclude '.git' ./ deployment/
+      
+      - name: Create deployment artifact
+        run: |
+          cd deployment
+          zip -r ../deployment.zip .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-package
+          path: deployment.zip
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: deployment-package
+
+      - name: Copy deployment package to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.JUDGE0_SHH }}
+          source: "deployment.zip"
+          target: "${{ secrets.DEPLOY_PATH }}"
+
+      # --- IMPROVED STEP ---
+      # Using pm2 restart for more reliability after file changes.
+      - name: Unzip, Install and Restart
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.JUDGE0_SHH }}
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            
+            cd ${{ secrets.DEPLOY_PATH }}
+            unzip -o deployment.zip
+            rm deployment.zip
+            npm install --omit=dev
+            pm2 restart lokdiary
