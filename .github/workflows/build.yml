@@ -78,4 +78,4 @@ jobs:
             unzip -o deployment.zip
             rm deployment.zip
             npm install --omit=dev
-            pm2 restart strapi-app
+            pm2 restart strapi
